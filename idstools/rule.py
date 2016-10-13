@@ -81,7 +81,6 @@ option_patterns = (
     re.compile("(sid)\s*:\s*(\d+);"),
     re.compile("(rev)\s*:\s*(\d+);"),
     re.compile("(metadata)\s*:\s*(.*?);"),
-    re.compile("(metadata_dict)\s*:\s*(.*?);"),
     re.compile("(flowbits)\s*:\s*(.*?);"),
     re.compile("(reference)\s*:\s*(.*?);"),
     re.compile("(classtype)\s*:\s*(.*?);"),
@@ -115,9 +114,7 @@ class Rule(dict):
 
     - **flowbits**: List of flowbit options in the rule
 
-    - **metadata**: Metadata values as a list
-
-    - **metadata_dict**: Metadata values as a dict
+    - **metadata**: Metadata values as a dict
 
     - **references**: References as a list
 
@@ -215,9 +212,7 @@ def parse(buf, group=None):
             if opt in ["gid", "sid", "rev"]:
                 rule[opt] = int(val)
             elif opt == "metadata":
-                rule[opt] = [v.strip() for v in val.split(",")]
-            elif opt == "metadata_dict":
-                rule["metadata"] = metadata_dict(val)
+                rule[opt] = metadata_dict(val) #[v.strip() for v in val.split(",")]
             elif opt == "flowbits":
                 rule.flowbits.append(val)
             elif opt == "reference":
