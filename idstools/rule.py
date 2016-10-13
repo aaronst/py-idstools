@@ -186,6 +186,8 @@ def metadata_dict(md):
         kv = kv.split(':')
         key = kv[0].strip()
         value = kv[1].strip()
+        if ' ' in value:
+            value = value.split(' ')
         metadata[key] = value
     return metadata
 
