@@ -81,6 +81,7 @@ option_patterns = (
     re.compile("(sid)\s*:\s*(\d+);"),
     re.compile("(rev)\s*:\s*(\d+);"),
     re.compile("(metadata)\s*:\s*(.*?);"),
+    re.compile("(metadata_dict)\s*:\s*(.*?);"),
     re.compile("(flowbits)\s*:\s*(.*?);"),
     re.compile("(reference)\s*:\s*(.*?);"),
     re.compile("(classtype)\s*:\s*(.*?);"),
@@ -115,6 +116,8 @@ class Rule(dict):
     - **flowbits**: List of flowbit options in the rule
 
     - **metadata**: Metadata values as a list
+
+    - **metadata_dict**: Metadata values as a dict
 
     - **references**: References as a list
 
@@ -180,6 +183,15 @@ class Rule(dict):
         """
         return "%s%s" % ("" if self.enabled else "# ", self.raw)
 
+def metadata_dict(md):
+    metadata = {}
+    for kv in [kv.strip() for kv in md.split(',')]:
+        kv = kv.split(':')
+        key = kv[0].strip()
+        value = kv[1].strip()
+        metadata[key] = value
+    return metadata
+
 def parse(buf, group=None):
     """ Parse a single rule for a string buffer.
 
@@ -204,6 +216,8 @@ def parse(buf, group=None):
                 rule[opt] = int(val)
             elif opt == "metadata":
                 rule[opt] = [v.strip() for v in val.split(",")]
+            elif opt == "metadata_dict":
+                rule["metadata"] = metadata_dict(val)
             elif opt == "flowbits":
                 rule.flowbits.append(val)
             elif opt == "reference":
